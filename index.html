@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobMatcher: AI-Powered Job Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .job {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JobMatcher: AI-Powered Job Recommendation</h1>
+    </header>
+    <div class="container">
+        <div class="form-group">
+            <label for="skills">Enter Your Skills:</label>
+            <textarea id="skills" rows="4" placeholder="e.g., Python, Machine Learning, Data Analysis"></textarea>
+        </div>
+        <button id="recommend-btn">Get Recommendations</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('recommend-btn').addEventListener('click', async () => {
+            const skills = document.getElementById('skills').value;
+            if (!skills.trim()) {
+                alert('Please enter your skills.');
+                return;
+            }
+
+            const response = await fetch('http://127.0.0.1:5000/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ skills })
+            });
+
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h3>Recommended Jobs:</h3>';
+
+            if (data.jobs && data.jobs.length > 0) {
+                data.jobs.forEach(job => {
+                    const jobDiv = document.createElement('div');
+                    jobDiv.classList.add('job');
+                    jobDiv.textContent = job;
+                    resultsDiv.appendChild(jobDiv);
+                });
+            } else {
+                resultsDiv.innerHTML += '<p>No recommendations found.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
